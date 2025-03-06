@@ -3,23 +3,34 @@ const cors = require("cors");
 const admin = require("firebase-admin");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS);
 
-// Inicializar Firebase
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://idgs09-dwp-8vo-default-rtdb.firebaseio.com/",
-});
+// Inicializar Firebase (configuración para Cloud Functions)
+admin.initializeApp(); // Método en minúscula
+const db = admin.firestore(); // Método en minúscula
 
-const db = admin.firestore();
 const app = express();
+
+// Configuración CORS para producción y desarrollo
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://idgs09-dwp-8vo.web.app", // Reemplaza con tu dominio de Firebase
+  "https://idgs09-dwp-8vo.firebaseapp.com"
+];
+
 app.use(express.json());
+
 app.use(cors({
-  origin: "http://localhost:3000", // ✅ Permite solicitudes desde el frontend
+  origin: function (origin, callback) { // Sin coma después de "function"
+      if (!origin || allowedorigins.indexOf(origin) !== -1) {
+          callback(null, true);
+      } else {
+          callback(new Error('Origen no permitido por CORS'));
+      }
+  }, // Cierre correcto de la función
   credentials: true,
-  methods: "GET,POST,PUT,DELETE,PATCH,OPTIONS",
-  allowedHeaders: "Content-Type,Authorization"
-}));
+  methods: ["GET", "POST", "PUT", "DELETE"], // Añadir métodos
+  allowedHeaders: ["Content-Type", "Authorization"]
+})); // Llave de cierre faltante
 
 app.options("*", cors());
 
@@ -335,8 +346,6 @@ app.patch("/api/grupos/:id", verificarToken, async (req, res) => {
   }
 });
 
-
-// Eliminar grupo por ID
 app.delete("/api/grupos/:id", verificarToken, async (req, res) => {
   try {
     const groupId = req.params.id;
@@ -352,6 +361,4 @@ app.delete("/api/grupos/:id", verificarToken, async (req, res) => {
   }
 });
 
-
-const PORT = 3001;
-app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));
+module.exports = app; // Exporta el router de Express
