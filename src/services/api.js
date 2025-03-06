@@ -3,7 +3,7 @@ import axios from "axios";
 const API_URL = "https://back-tast-manager.onrender.com/api";
 
 const api = axios.create({
-  baseURL: "http://localhost:3001/api",
+  baseURL: "https://back-tast-manager.onrender.com/api",
   headers: {
     "Content-Type": "application/json",
   },
