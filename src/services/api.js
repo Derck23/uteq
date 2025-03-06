@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3001/api";
+const API_URL = "https://back-tast-manager.onrender.com/api";
 
 const api = axios.create({
   baseURL: "http://localhost:3001/api",
