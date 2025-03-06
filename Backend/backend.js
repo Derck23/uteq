@@ -15,7 +15,10 @@ const db = admin.firestore();
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: "http://localhost:3000", // ✅ Permite solicitudes desde el frontend
+  origin: [
+    "http://localhost:3000",
+    "https://task-manager-sepia-xi.vercel.app" // ✅ Agrega tu dominio de Vercel
+  ], // ✅ Permite solicitudes desde el frontend
   credentials: true,
   methods: "GET,POST,PUT,DELETE,PATCH,OPTIONS",
   allowedHeaders: "Content-Type,Authorization"
